@@ -3,7 +3,7 @@
 # Written by Alex Elman @_pkill 2014
 
 DATE=`date +%F`
-LOGNAME="/home/aelman/logs/duplicity.log.${DATE}"
+LOGNAME="/home/$USER/logs/duplicity.log.${DATE}"
 usage() {
   echo '
   duptools - manage duplicity backup
