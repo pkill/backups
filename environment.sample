@@ -1,0 +1,9 @@
+# Backup photos
+export ENCRYPT_KEY=fooblah
+. $HOME/.passphrase
+# directories, space separated
+export SOURCE="/home/$USER/"
+export BUCKET="file:///mnt/disk/backup/"
+export EXCLUDE="${SOURCE}.cache ${SOURCE}Downloads ${SOURCE}.mozilla ${SOURCE}.icedtea ${SOURCE}.adobe ${SOURCE}.thunderbird ${SOURCE}.config ${SOURCE}.macromedia ${SOURCE}.thumbnails ${SOURCE}.secure"
+export VOLSIZE=50
+
