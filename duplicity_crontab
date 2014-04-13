@@ -1,0 +1,36 @@
+# Place this in your crontab
+# crontab -u $USER duplicity_crontab
+
+# *     *     *   *    *        command to be executed
+# -     -     -   -    -
+# |     |     |   |    |
+# |     |     |   |    +----- day of week (0 - 6) (Sunday=0)
+# |     |     |   +------- month (1 - 12)
+# |     |     +--------- day of        month (1 - 31)
+# |     +----------- hour (0 - 23)
+# +------------- min (0 - 59)
+
+# local dailies
+0 3 * * * $HOME/bin/duptools.sh backup linux-black
+
+# local weeklies (Sunday)
+0 11 * * 0 $HOME/bin/duptools.sh backup music-black
+30 11 * * 0 $HOME/bin/duptools.sh backup win-black
+
+# cloud weeklies (Sunday)
+0 13 * * 0 $HOME/bin/duptools.sh backup linux-yellow
+
+# remote weeklies (Sunday)
+0 11 * * 0 $HOME/bin/duptools.sh backup linux-red
+30 11 * * 0 $HOME/bin/duptools.sh backup linux-blue
+
+# cloud monthlies
+0 20 1 * * $HOME/bin/duptools.sh backup digitalphotos-yellow
+30 20 1 * * $HOME/bin/duptools.sh backup win-yellow
+0 21 1 * * $HOME/bin/duptools.sh backup library-yellow
+
+# remote monthlies
+0 20 1 * * $HOME/bin/duptools.sh backup music-blue
+30 20 1 * * $HOME/bin/duptools.sh backup library-blue
+0 21 1 * * $HOME/bin/duptools.sh backup win-blue
+
