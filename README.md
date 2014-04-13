@@ -3,11 +3,11 @@ backups
 
 Tools for managing my backups
 
-#@ What does this do?
+## What does this do?
 
 This is Duptools, a backup system I wrote that wraps the Duplicity backup utility.
 
-##@ What is Duplicity?
+### What is Duplicity?
 Duplicity is encrypted bandwidth-efficient backup using the rsync algorithm
 
 Read all about it here: http://duplicity.nongnu.org/
