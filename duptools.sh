@@ -79,19 +79,19 @@ if [ ! -f $LOGNAME ]; then
     touch $LOGNAME
 fi
 
-if [ "$1" = 'backup' ]; then
+if [ "$1" == 'backup' ]; then
     sourcevars $2 || usage
     backup
-elif [ "$1" = 'list' ]; then
+elif [ "$1" == 'list' ]; then
     sourcevars $2 || usage
     list
-elif [ "$1" = 'restore' ]; then
+elif [ "$1" == 'restore' ]; then
     if [ $# = 3 ]; then
         restore $2 $3
     else
         restore $2 $3 $4
     fi
-elif [ "$1" = 'status' ]; then
+elif [ "$1" == 'status' ]; then
     sourcevars $2 || usage
     status
 else
