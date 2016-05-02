@@ -5,7 +5,7 @@
 DATE=`date +%F`
 LOGNAME="/home/$USER/logs/duplicity.log.${DATE}"
 usage() {
-  echo '
+    echo '
   duptools - manage duplicity backup
 
   USAGE:
@@ -18,57 +18,46 @@ usage() {
 }
 
 backup() {
-  # perform an incremental backup to root, include directories, exclude everything else, / as reference.
-  export PASSPHRASE
-  EXCLUDES=""
-  INCLUDES=""
-  if [ -n "$EXCLUDE" ]; then
-      for item in $EXCLUDE; do
-          EXCLUDES="${EXCLUDES} --exclude ${item}"
-      done
-  fi
-  echo "excludes are ${EXCLUDES}"
-  if [ -n "$INCLUDE" ]; then
-      for item in $INCLUDE; do
-          INCLUDES="${INCLUDES} --include ${item}"
-      done
-  fi
+    if [ -n "$EXCLUDE" ]; then
+        EXCLUDE="--exclude $ROOT${EXCLUDE//,/ --exclude $ROOT}"
+    fi
+    if [ -n "$INCLUDE" ]; then
+        INCLUDE="--include $ROOT${INCLUDE//,/ --include $ROOT}"
+    fi
 
-  COMMAND="/usr/bin/duplicity -v8 ${ENCRYPT_KEY:+--encrypt-key} --full-if-older-than 120D --num-retries 12 $ARGS --volsize ${VOLSIZE} ${INCLUDES} ${EXCLUDES} --log-file ${LOGNAME} ${SOURCE} ${BUCKET}"
+    # perform an incremental backup to root, include directories, exclude everything else, / as reference.
+    COMMAND="/usr/bin/duplicity -v8 ${ENCRYPT_KEY:+--encrypt-key $ENCRYPT_KEY} --full-if-older-than 120D --num-retries 12 $ARGS --volsize ${VOLSIZE} ${INCLUDE} ${EXCLUDE} --log-file ${LOGNAME} ${ROOT} ${BUCKET}"
 
-  echo "Running duplicity -v8 ${COMMAND}"
-  $COMMAND
+    echo "Running ${COMMAND}"
+    $COMMAND
 
-  if [ ! -z $EMAIL ]; then
-    mail -s 'backup report' $EMAIL < $LOGNAME
-  fi
+    if [ ! -z $EMAIL ]; then
+        mail -s 'backup report' $EMAIL < $LOGNAME
+    fi
 }
 
 list() {
-    export PASSPHRASE
     /usr/bin/duplicity list-current-files --encrypt-key $ENCRYPT_KEY $BUCKET
 }
 
 restore() {
-    export PASSPHRASE
-  if [ $# = 2 ]; then
-      /usr/bin/duplicity restore --file-to-restore --encrypt-key $ENCRYPT_KEY --log-file $LOGNAME $1 $BUCKET $2
-  else
-      /usr/bin/duplicity restore --file-to-restore --encrypt-key $ENCRYPT_KEY --log-file $LOGNAME $1 --time $2 $BUCKET $3
-  fi
+    if [ $# = 2 ]; then
+        /usr/bin/duplicity restore --file-to-restore --encrypt-key $ENCRYPT_KEY --log-file $LOGNAME $1 $BUCKET $2
+    else
+        /usr/bin/duplicity restore --file-to-restore --encrypt-key $ENCRYPT_KEY --log-file $LOGNAME $1 --time $2 $BUCKET $3
+    fi
 }
 
 status() {
-    export PASSPHRASE
     /usr/bin/duplicity collection-status --encrypt-key $ENCRYPT_KEY $BUCKET
 }
 
 sourcevars () {
     backuptype=$1
-    FILE="${HOME}/backups/$backuptype"
+    FILE="${HOME}/backups/envs/$backuptype"
     if [ -f $FILE ]; then
-        source $FILE
         set -a
+        source $FILE
     else
         usage
         exit 1
@@ -80,10 +69,12 @@ if [ ! -f $LOGNAME ]; then
 fi
 
 if [ "$1" == 'backup' ]; then
-    sourcevars $2 || usage
+    set -a
+    echo $EXCLUDE_LIST
+    sourcevars $2
     backup
 elif [ "$1" == 'list' ]; then
-    sourcevars $2 || usage
+    sourcevars $2
     list
 elif [ "$1" == 'restore' ]; then
     if [ $# = 3 ]; then
@@ -92,7 +83,7 @@ elif [ "$1" == 'restore' ]; then
         restore $2 $3 $4
     fi
 elif [ "$1" == 'status' ]; then
-    sourcevars $2 || usage
+    sourcevars $2
     status
 else
     usage
